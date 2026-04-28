@@ -13,6 +13,7 @@ class _UiNotificationState extends State<UiNotification> {
   String title = 'title';
   String helper = 'helper';
   int _counter = 0;
+
   //FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
@@ -21,15 +22,20 @@ class _UiNotificationState extends State<UiNotification> {
       _counter++;
     });
     flutterLocalNotificationsPlugin.show(
-        0,
-        "Testing $_counter",
-        "How you doin?",
-        NotificationDetails(
-            android: AndroidNotificationDetails(channel.id, channel.name,
-                importance: Importance.high,
-                color: Colors.blue,
-                playSound: true,
-                icon: "@mipmap/ic_launcher")));
+      id: 0,
+      title: "Testing $_counter",
+      body: "How you doin?",
+      notificationDetails: NotificationDetails(
+        android: AndroidNotificationDetails(
+          channel.id,
+          channel.name,
+          importance: Importance.high,
+          color: Colors.blue,
+          playSound: true,
+          icon: "@mipmap/ic_launcher",
+        ),
+      ),
+    );
   }
 
   @override
@@ -38,10 +44,7 @@ class _UiNotificationState extends State<UiNotification> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          ListTile(
-            title: Text(title),
-            subtitle: Text(helper),
-          ),
+          ListTile(title: Text(title), subtitle: Text(helper)),
           CupertinoButton(
             color: Colors.pink[200],
             child: Text('send'),

@@ -10,8 +10,11 @@ import 'package:blood_Bank/utils/Screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
-    "high_importnace_channel", "High_imprtance_notification",
-    importance: Importance.high, playSound: true);
+  "high_importnace_channel",
+  "High_imprtance_notification",
+  importance: Importance.high,
+  playSound: true,
+);
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -24,15 +27,18 @@ Future<void> FirebaseMessagingBackgroundHandler(RemoteMessage message) async {
 class SendRequest extends StatefulWidget {
   final String passedBlood;
   final String passedCity;
+
   SendRequest({required this.passedBlood, required this.passedCity});
+
   @override
   _SendRequestState createState() => _SendRequestState();
 }
 
 class _SendRequestState extends State<SendRequest> {
   String textValue = 'hello world';
-  CollectionReference reference =
-      FirebaseFirestore.instance.collection("Registration");
+  CollectionReference reference = FirebaseFirestore.instance.collection(
+    "Registration",
+  );
 
   @override
   void initState() {
@@ -43,18 +49,20 @@ class _SendRequestState extends State<SendRequest> {
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null) {
         flutterLocalNotificationsPlugin.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-                android: AndroidNotificationDetails(
+          title: notification.title,
+          body: notification.body,
+          id: 0,
+          notificationDetails: NotificationDetails(
+            android: AndroidNotificationDetails(
               channel.id,
               channel.name,
               channelDescription: channel.description,
               color: Colors.blue,
               playSound: true,
               icon: "@mipmap/ic_launcher",
-            )));
+            ),
+          ),
+        );
       }
     });
 
@@ -66,21 +74,19 @@ class _SendRequestState extends State<SendRequest> {
         String username = message.data['name'] ?? '';
         print("username:$username");
         showDialog(
-            context: context,
-            builder: (_) {
-              return AlertDialog(
-                title: Text(notification.title!),
-                content: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Name:$username'),
-                      Text(notification.body!)
-                    ],
-                  ),
+          context: context,
+          builder: (_) {
+            return AlertDialog(
+              title: Text(notification.title!),
+              content: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [Text('Name:$username'), Text(notification.body!)],
                 ),
-              );
-            });
+              ),
+            );
+          },
+        );
       }
     });
   }
@@ -124,10 +130,11 @@ class _SendRequestState extends State<SendRequest> {
                         radius: 25,
                         backgroundImage:
                             (querySnapshot.docs[index]["imageUrl"] == "")
-                                ? AssetImage("assets/images/Profile/pro.png")
-                                    as ImageProvider<Object>?
-                                : NetworkImage(
-                                    querySnapshot.docs[index]["imageUrl"]),
+                            ? AssetImage("assets/images/Profile/pro.png")
+                                  as ImageProvider<Object>?
+                            : NetworkImage(
+                                querySnapshot.docs[index]["imageUrl"],
+                              ),
                       ),
                       title: Text(querySnapshot.docs[index]["Name"]),
                       subtitle: Text(querySnapshot.docs[index]['City']),
@@ -167,10 +174,11 @@ class _SendRequestState extends State<SendRequest> {
                             ),
                           );
                           await APIs.sendPushNotification(
-                              ptoken,
-                              "Blood:${widget.passedBlood}",
-                              "City:${widget.passedCity}",
-                              "name:$name");
+                            ptoken,
+                            "Blood:${widget.passedBlood}",
+                            "City:${widget.passedCity}",
+                            "name:$name",
+                          );
                         },
                         icon: Icon(CupertinoIcons.arrow_right),
                       ),
